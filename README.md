@@ -13,10 +13,10 @@ Hay que seguir los siguientes pasos:
 
 * Esperar el correo de OVH y acceder con la contraseña al servidor por el puerto 22.
 * Inmediatamente se acceda, cambiar la contraseña del usuario debian.
-* Ejecutar sudo apt update y sudo apt upgrade, y reiniciar si es necesario.
 * Instalar Ansible para ejecutar el playbook adjunto
 * Hacer una copia de este proyecto al directorio personal del VPS.
 * Moverse al siguiente directorio y ejecutar el playbook de Ansible, hará la siguiente configuración:
+    * Actualizar el sistema operativo.
     * Instalar el libpam-google-authenticator para configuración personal más adelante.
     * Configurar el servidor ssh a partir de los ficheros con nombre sshd en el directorio config.
     * Instalar fail2ban y configurarlo correctamente a partir del archivo jail.local del directorio config.

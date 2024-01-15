@@ -4,6 +4,14 @@
   connection: local
   become: yes
   tasks:
+    - name: Actualizar la lista de paquetes
+      apt:
+        update_cache: yes
+
+    - name: Actualizar todos los paquetes del sistema
+      apt:
+        upgrade: dist
+
     - name: Instalar libpam-google-authenticator
       apt:
         name: libpam-google-authenticator
@@ -30,7 +38,7 @@
       apt:
         name: fail2ban
         state: present
-    
+
     - name: Crear logdata para el fail2ban
       file:
         path: /root/sshd
@@ -79,7 +87,7 @@
       command: docker compose up -d
       args:
         chdir: ./config/stack_portainer/
-    
+
     - name: Levantar contenedor Docker Compose con Netdata
       command: docker compose up -d
       args:
@@ -89,7 +97,7 @@
       command: docker compose -f generate-indexer-certs.yml run --rm generator
       args:
         chdir: ./config/stack_wazuh/
-      
+
     - name: Levantar contenedores Docker Compose con Wazuh
       command: docker compose up -d
       args:
