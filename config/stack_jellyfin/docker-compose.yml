@@ -1,0 +1,34 @@
+version: "3.3"
+
+services:
+  jellyfin:
+    image: linuxserver/jellyfin
+    container_name: jellyfin
+    restart: unless-stopped 
+    ports:
+      - "8096:8096"
+    environment:
+      - PUID=998
+      - PGID=1000
+      - TZ=Europe/Madrid
+    volumes:
+      - config:/config
+      - tvshows:/data/tvshows  
+      - movies:/data/movies   
+      - music:/data/music
+    networks:
+      - jellyfin
+      - npm
+
+volumes:
+  config:
+  tvshows:
+  movies:
+  music:
+
+networks:
+  jellyfin:
+    name: jellyfin
+    driver: bridge
+  npm:
+    external: true

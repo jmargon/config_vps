@@ -1,0 +1,35 @@
+version: '3'
+services:
+  netdata:
+    image: netdata/netdata
+    container_name: netdata
+    hostname: sysprogram.me
+    ports:
+      - "19999:19999"
+    restart: unless-stopped
+    volumes:
+      - netdataconfig:/etc/netdata
+      - ./health_alarm_notify.conf:/etc/netdata/health_alarm_notify.conf
+      - ./health.d:/etc/netdata/health.d
+      - netdatalib:/var/lib/netdata
+      - netdatacache:/var/cache/netdata
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+    networks:
+      - netdata
+      - npm
+
+volumes:
+  netdataconfig:
+  netdatalib:
+  netdatacache:
+
+networks:
+  netdata:
+    name: netdata
+    driver: bridge
+  npm:
+    external: true

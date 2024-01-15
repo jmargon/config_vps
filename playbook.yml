@@ -1,0 +1,112 @@
+---
+- name: Configurar mi VPS en caso de reinstalarla
+  hosts: localhost
+  connection: local
+  become: yes
+  tasks:
+    - name: Instalar libpam-google-authenticator
+      apt:
+        name: libpam-google-authenticator
+        state: present
+
+    - name: Modificar el archivo /etc/pam.d/sshd
+      copy:
+        src: ./config/sshd
+        dest: /etc/pam.d/sshd
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Configurar servidor ssh con el archivo sshd_config
+      copy:
+        src: ./config/sshd_config
+        dest: /etc/ssh/sshd_config
+        owner: root
+        group: root
+        mode: '0600'
+      notify: restart ssh
+
+    - name: Instalar fail2ban
+      apt:
+        name: fail2ban
+        state: present
+    
+    - name: Crear logdata para el fail2ban
+      file:
+        path: /root/sshd
+        state: touch
+
+    - name: Configurar fail2ban con el archivo jail.local
+      copy:
+        src: ./config/jail.local
+        dest: /etc/fail2ban/jail.local
+        owner: root
+        group: root
+        mode: '0644'
+      notify: restart fail2ban
+
+    - name: Instalar dependencias para Docker
+      apt:
+        name: ['ca-certificates', 'curl', 'gnupg', 'lsb-release']
+        state: present
+
+    - name: Crear directorio para la llave de Docker
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+
+    - name: Descargar y guardar la llave de Docker
+      shell: |
+        curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+        chmod a+r /etc/apt/keyrings/docker.gpg
+
+    - name: Añadir el repositorio de Docker
+      shell: |
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+        apt update
+
+    - name: Instalar Docker y el plugin de Docker Compose
+      apt:
+        name: ['docker-ce', 'docker-ce-cli', 'containerd.io', 'docker-compose-plugin']
+        state: present
+
+    - name: Levantar contenedores Docker Compose con Nginx (proxy manager incluido)
+      command: docker compose up -d
+      args:
+        chdir: ./config/stack_nginxproxymanager/
+
+    - name: Levantar contenedor Docker Compose con Portainer
+      command: docker compose up -d
+      args:
+        chdir: ./config/stack_portainer/
+    
+    - name: Levantar contenedor Docker Compose con Netdata
+      command: docker compose up -d
+      args:
+        chdir: ./config/stack_netdata/
+
+    - name: Crear certificado para Wazuh
+      command: docker compose -f generate-indexer-certs.yml run --rm generator
+      args:
+        chdir: ./config/stack_wazuh/
+      
+    - name: Levantar contenedores Docker Compose con Wazuh
+      command: docker compose up -d
+      args:
+        chdir: ./config/stack_wazuh/
+
+    - name: Levantar contenedor Docker Compose con Jellyfin
+      command: docker compose up -d
+      args:
+        chdir: ./config/stack_jellyfin/
+
+  handlers:
+    - name: restart ssh
+      service:
+        name: ssh
+        state: restarted
+
+    - name: restart fail2ban
+      service:
+        name: fail2ban
+        state: restarted
