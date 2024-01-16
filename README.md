@@ -21,7 +21,7 @@ Hay que seguir los siguientes pasos:
     * Configurar el servidor ssh a partir de los ficheros con nombre sshd en el directorio config.
     * Instalar fail2ban y configurarlo correctamente a partir del archivo jail.local del directorio config.
     * Instalar Docker y Docker Compose.
-    * Levantar los contenedores de los directorios stack que hay en el directorio config.
+    * Levantar los contenedores de los directorios stack que hay en el directorio config (Nginx Proxy Manager, Portainer, Netdata, Wazuh y Jellyfin).
 * Hacer el google-authenticator.
 * Copiar el resto de directorios.
 * Hacer las configuraciones de todos los servicios en los contenedores.
