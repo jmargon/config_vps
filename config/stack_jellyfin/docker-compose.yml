@@ -12,19 +12,13 @@ services:
       - PGID=1000
       - TZ=Europe/Madrid
     volumes:
-      - config:/config
-      - tvshows:/data/tvshows  
-      - movies:/data/movies   
-      - music:/data/music
+      - ./config:/config
+      - ./tvshows:/data/tvshows  
+      - ./movies:/data/movies   
+      - ./music:/data/music
     networks:
       - jellyfin
       - npm
-
-volumes:
-  config:
-  tvshows:
-  movies:
-  music:
 
 networks:
   jellyfin:
