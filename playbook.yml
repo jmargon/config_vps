@@ -108,6 +108,11 @@
       args:
         chdir: ./config/stack_jellyfin/
 
+    - name: Levantar contenedor Docker Compose con Wireward VPN
+      command: docker compose up -d
+      args:
+        chdir: ./config/stack_wireward/
+
   handlers:
     - name: restart ssh
       service:

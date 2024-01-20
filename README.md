@@ -22,8 +22,10 @@ Hay que seguir los siguientes pasos:
     * Instalar fail2ban y configurarlo correctamente a partir del archivo jail.local del directorio config.
     * Instalar Docker y Docker Compose.
     * Levantar los contenedores de los directorios stack que hay en el directorio config (Nginx Proxy Manager, Portainer, Netdata, Wazuh y Jellyfin).
+    * Levanta también un contenedor de VPN Wireward.
 * Hacer el google-authenticator.
 * Copiar el resto de directorios.
+* Descargar el Peer generado por Wireward.
 * Hacer las configuraciones de todos los servicios en los contenedores.
 ## Listo
 Una vez cumplidos estos pasos, el acceso ssh a la VPS estará por un puerto diferente al 22 con 2FA activo y el fail2ban corriendo correctamente. También estarán levantados varios microservicios de Docker.
